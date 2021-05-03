@@ -1,0 +1,179 @@
+#include<iostream>
+using namespace std;
+struct process
+{
+    char name;
+    int AT,BT,WT,TAT,RT,FT;
+}Q0[10],Q1[10],Q2[10];/*Three queues*/
+
+float n;
+void sortByArrival()
+{
+struct process temp;
+int i,j;
+for(i=0;i<n;i++)
+    {
+        for(j=i+1;j<n;j++)
+            {
+                if(Q0[i].AT>Q0[j].AT)
+                    {
+                          temp=Q0[i];
+                          Q0[i]=Q0[j];
+                          Q0[j]=temp;
+                    }
+            }
+    }
+}
+int main()
+{
+int sum1=0,sum2=0,sum3=0;
+float avg1=0.0,avg2=0.0,avg3=0.0;
+int r=0;
+int k=0;
+     int i,j,time=0,tq0=8,tq1=16,flag=0;
+    //int temp1[10];
+     char c;
+     cout<<"Enter no of processes:";
+     cin>>n;
+     for(i=0,c='A';i<n;i++,c++)
+     {
+         Q0[i].name=c;
+         cout<<"\nEnter the arrival time and burst time of process "<<Q0[i].name<<" : ";
+         cin>>Q0[i].AT>>Q0[i].BT;
+    }
+sortByArrival();
+time+=Q0[0].AT;
+cout<<"Process in  queue 0 following RR with qt=8";
+cout<<"\nProcess"<<"     WT     "<<"     TAT     "<<"      FT      "<<"      RT     "<<endl;
+for(i=0;i<n;i++)
+{
+  if(Q0[i].BT<=tq0)
+  {    Q0[i].RT=time-Q0[i].AT;
+       time+=Q0[i].BT;/*from arrival time of first process to completion of this process*/
+       Q0[i].FT=time;
+       Q0[i].WT=Q0[i].FT-Q0[i].AT-Q0[i].BT;/*amount of time process has been waiting in the queue 0*/
+       Q0[i].TAT=Q0[i].FT-Q0[i].AT;
+       cout<<Q0[i].name<<"           "<<Q0[i].WT<<"           "<<Q0[i].TAT<<"            "<<Q0[i].FT<<"            "<<Q0[i].RT<<endl;  
+  }
+  else/*Remaining process moves to queue 1 with qt=16*/
+  {
+    Q0[i].RT=time-Q0[i].AT;  
+    //time+=tq0;/*from arrival time of first process to completion of this process*/
+    Q0[i].FT=time+tq0;
+    Q0[i].WT=Q0[i].FT-Q0[i].AT-tq0;/*amount of time process has been waiting in the queue 1*/
+    Q0[i].TAT=Q0[i].FT-Q0[i].AT;
+    cout<<Q0[i].name<<"           "<<Q0[i].WT<<"           "<<Q0[i].TAT<<"             "<<Q0[i].FT<<"            "<<Q0[i].RT<<endl;
+    time+=tq0;
+    Q1[i].name=Q0[i].name;
+    Q1[i].BT=Q0[i].BT-tq0;
+     //k=k+1;
+      flag=1;
+  }
+}
+if(flag==1)
+ {cout<<"\nProcess in queue 1 following RR with qt=16";
+  cout<<"\nProcess"<<"     WT     "<<"     TAT     "<<"     FT      "<<"       RT        "<<endl;
+}
+for(int i=0;i<n;i++)
+   {
+   if(Q1[i].BT!=0)
+   {
+    if(Q1[i].BT<=tq1)
+     {
+       Q1[i].RT=time-Q0[i].FT;
+       Q1[i].FT=time+Q1[i].BT;
+       Q1[i].WT=Q1[i].FT-Q0[i].FT-Q1[i].BT;
+       Q1[i].TAT=Q1[i].FT-Q0[i].FT;
+       time+=Q1[i].BT;
+       cout<<Q1[i].name<<"           "<<Q1[i].WT<<"          "<<Q1[i].TAT<<"             "<<Q1[i].FT<<"             "<<Q1[i].RT<<endl;
+   
+       }
+    else/*process moves to queue 2 with FCFS*/
+    {
+      Q1[i].RT=time-Q0[i].FT;
+      Q1[i].FT=time+tq1;
+      Q1[i].WT=Q1[i].FT-Q0[i].FT-tq1;
+       Q1[i].TAT=Q1[i].FT-Q0[i].FT;
+       time+=tq1;
+       cout<<Q1[i].name<<"           "<<Q1[i].WT<<"          "<<Q1[i].TAT<<"            "<<Q1[i].FT<<"            "<<Q1[i].RT<<endl;
+    Q2[i].name=Q1[i].name;
+    Q2[i].BT=Q1[i].BT-tq1;
+    //temp1[i]=Q1[i].FT;
+    //r=r+1;
+     flag=2;
+    }
+    }
+  }
+{if(flag==2)
+cout<<"Process in queue 2 following FCFS "<<endl;
+cout<<"Process"<<"     WT     "<<"     TAT     "<<"       FT      "<<"       RT      "<<endl;
+}
+for(int i=0;i<n;i++)
+{
+if(Q2[i].BT!=0)
+{
+    if(Q2[i].BT>0)
+    {
+        Q2[i].RT=time-Q1[i].FT;
+        Q2[i].FT=time+Q2[i].BT;
+        Q2[i].TAT=Q2[i].FT-Q1[i].FT;
+        Q2[i].WT=Q2[i].FT-Q2[i].BT-Q1[i].FT;
+cout<<Q2[i].name<<"           "<<Q2[i].WT<<"          "<<Q2[i].TAT<<"            "<<Q2[i].FT<<"            "<<Q2[i].RT<<endl;
+time+=Q2[i].BT;
+}
+}
+}
+cout<<"**************************************************"<<endl;
+cout<<endl;
+cout<<Q0[0].AT<<" ";
+for(int i=0;i<n;i++)
+{
+cout<<Q0[i].name<<"     ";
+if(Q0[i].FT!=0)
+{
+cout<<Q0[i].FT<<"     ";
+}
+}
+for(int i=0;i<n;i++)
+{
+cout<<Q1[i].name<<"     ";
+if(Q1[i].FT!=0)
+{
+cout<<Q1[i].FT<<"     ";
+}
+}
+for(int i=0;i<n;i++)
+{
+cout<<Q2[i].name<<"     ";
+if(Q2[i].FT!=0)
+{
+cout<<Q2[i].FT<<"     ";
+}
+}
+for(int p=0;p<n;p++)
+{
+sum1+=Q0[p].RT;
+sum2+=Q0[p].WT;
+sum3+=Q0[p].TAT;
+}
+for(int p=0;p<n;p++)
+{
+sum1+=Q1[p].RT;
+sum2+=Q1[p].WT;
+sum3+=Q1[p].TAT;
+}
+for(int p=0;p<n;p++)
+{
+sum1+=Q2[p].RT;
+sum2+=Q2[p].WT;
+sum3+=Q2[p].TAT;
+}
+cout<<endl;
+avg1=sum1/n;
+avg2=sum2/n;
+avg3=sum3/n;
+cout<<"Average response time : "<<avg1<<endl;
+cout<<"Average waiting time: "<<avg2<<endl;
+cout<<"Average Turn Around Time:"<<avg3<<endl;
+return 0;
+}
